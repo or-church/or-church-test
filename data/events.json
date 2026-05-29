@@ -1,13 +1,13 @@
 [
   {
-    "id": "202605310000",
+    "id": "202605311600",
     "name": "PRAISE PRAYER BBQ",
     "start": "2026-05-31",
-    "end": "2026-06-02",
-    "stime": "",
-    "etime": "",
+    "end": "2026-05-31",
+    "stime": "16:00",
+    "etime": "18:00",
     "reserve": "free",
-    "img": "https://or-church.github.io/or-church-test/images/events/202605310000.png"
+    "img": "https://or-church.github.io/or-church-test/images/events/202605311600.png"
   },
   {
     "id": "202606201520",
