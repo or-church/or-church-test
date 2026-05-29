@@ -1358,3 +1358,23 @@ document.addEventListener('click',function(e){
 })();
 /* ========== Lightbox ========== */
 function openLightbox(src){var lb=document.getElementById('lightbox');document.getElementById('lightbox-img').src=src;lb.style.display='flex';document.body.style.overflow='hidden';}
+function closeLightbox(){document.getElementById('lightbox').style.display='none';document.getElementById('lightbox-img').src='';document.body.style.overflow='';}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLightbox();});
+/* ========== 初期化 ========== */
+(function(){
+  /* 現在の半期を設定 */
+  var now=new Date();
+  var m=now.getMonth()+1;
+  var y=now.getFullYear();
+  var half=(m>=4&&m<=9)?0:1;
+  var halfYear=(half===1&&m>=10)?y:(half===1&&m<=3)?y-1:y;
+  calHalf.ja=calHalf.en=half;
+  calHalfYear.ja=calHalfYear.en=halfYear;
+  showPage('home');
+  updateNoticeBanners();
+  /* GitHubからevents.jsonを読み込んでカレンダー・画像を描画 */
+  loadEventsFromGitHub();
+})();
+</script>
+</body>
+</html>
