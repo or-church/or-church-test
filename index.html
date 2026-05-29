@@ -1361,6 +1361,12 @@ async function saveEvent(mode){
   pendingImgData=null; pendingImgFilename=null;
   closeSubForm(mode==='new'?'event-new':'event-edit');
   renderMaintEventList();
+  /* 画像がある場合は反映待ちメッセージを表示 */
+  if(imgAbsUrl){
+    showSaveMessage('保存しました。画像の表示には1〜2分かかる場合があります。');
+  } else {
+    showSaveMessage('保存しました。');
+  }
 }
 async function deleteEvent(){
   if(!editingEventId)return;
@@ -1382,8 +1388,22 @@ async function deleteEvent(){
   }catch(e){console.error(e);}
   closeSubForm('event-edit');
   renderMaintEventList();
+  showSaveMessage('削除しました。');
 }
 
+function showSaveMessage(msg){
+  var el=document.getElementById('save-message');
+  if(!el){
+    el=document.createElement('div');
+    el.id='save-message';
+    el.style.cssText='position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#5c8a3a;color:#fff;padding:0.8rem 1.6rem;border-radius:8px;font-size:14px;font-family:\'Noto Sans JP\',sans-serif;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:opacity 0.5s';
+    document.body.appendChild(el);
+  }
+  el.textContent=msg;
+  el.style.opacity='1';
+  clearTimeout(el._timer);
+  el._timer=setTimeout(function(){el.style.opacity='0';},4000);
+}
 /* ========== ページ切り替え ========== */
 function revealPage(name){
   setTimeout(function(){
