@@ -1203,6 +1203,12 @@ async function githubDeleteFile(path,message){
     return res.json();
   }catch(e){console.log('ファイル削除エラー',e);}
 }
+async function githubRenameFile(oldPath,newPath,message){
+  try{
+    var res=await fetch(WORKER_URL+'/github',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'rename',path:oldPath,content:newPath,message:message||'rename file'})});
+    return res.json();
+  }catch(e){console.log('ファイルリネームエラー',e);}
+}
 async function githubUpdateBinary(path,base64Content,message){
   var res=await fetch(WORKER_URL+'/github',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'update-binary',path:path,content:base64Content,message:message})});
   return res.json();
@@ -1322,12 +1328,22 @@ async function saveEvent(mode){
     await saveEventsToGitHub();
     /* 画像をGitHubにアップロード */
     if(pendingImgData){
+      /* 新しい画像が選択された場合：新ファイル名でアップロード */
       var base64=pendingImgData.split(',')[1];
       await githubUpdateBinary(imgRelPath,base64,'upload event image');
-    }
-    /* 古い画像ファイルを削除（ファイル名が変わった場合） */
-    if(oldImgRelPath){
-      await githubDeleteFile(oldImgRelPath,'delete old event image');
+      /* 古いファイルは別名なら削除（古い画像と新しい画像は別ファイル） */
+      if(oldImgRelPath){
+        await githubDeleteFile(oldImgRelPath,'delete old event image');
+      }
+    } else if(oldImgRelPath){
+      /* 新しい画像が選択されていないがファイル名が変わった場合：リネーム */
+      await githubRenameFile(oldImgRelPath,imgRelPath,'rename event image');
+      /* リネーム後のURLに更新 */
+      var idx2=eventsData.findIndex(function(e){return e.id===imgFilename.replace('.png','');});
+      if(idx2>=0&&eventsData[idx2].img){
+        eventsData[idx2].img=GITHUB_PAGES_BASE+'/'+imgRelPath;
+        await saveEventsToGitHub();
+      }
     }
   }catch(e){console.error('保存エラー',e);}
   pendingImgData=null; pendingImgFilename=null;
