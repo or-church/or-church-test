@@ -672,9 +672,9 @@ footer{background-color:#2c1a0e;color:rgba(245,237,227,0.7)}
 <button class="maint-close-btn" onclick="closeSubForm('event-new')">✕</button>
 <div class="maint-modal-title">イベント 新規入力</div>
 <div class="mf-field" id="fev-name-wrap">
-<label class="mf-label">イベント名<span class="req">*</span>（全角15文字／半角30文字以内）</label>
+<label class="mf-label">イベント名<span class="req">*</span>（全角25文字／半角50文字以内）</label>
 <input type="text" class="mf-input" id="fev-name" placeholder="例：日曜礼拝" oninput="checkEventNameLen('fev-name','fev-name-warn')"/>
-<span class="mf-char-warn" id="fev-name-warn">文字数が超過しています（全角15文字・半角30文字まで）</span>
+<span class="mf-char-warn" id="fev-name-warn">文字数が超過しています（全角25文字・半角50文字まで）</span>
 <span class="mf-err">イベント名を入力してください</span>
 </div>
 <div class="mf-grid2">
@@ -731,9 +731,9 @@ footer{background-color:#2c1a0e;color:rgba(245,237,227,0.7)}
 <button class="maint-close-btn" onclick="closeSubForm('event-edit')">✕</button>
 <div class="maint-modal-title">イベント 編集</div>
 <div class="mf-field" id="fee-name-wrap">
-<label class="mf-label">イベント名<span class="req">*</span>（全角15文字／半角30文字以内）</label>
+<label class="mf-label">イベント名<span class="req">*</span>（全角25文字／半角50文字以内）</label>
 <input type="text" class="mf-input" id="fee-name" placeholder="例：日曜礼拝" oninput="checkEventNameLen('fee-name','fee-name-warn')"/>
-<span class="mf-char-warn" id="fee-name-warn">文字数が超過しています（全角15文字・半角30文字まで）</span>
+<span class="mf-char-warn" id="fee-name-warn">文字数が超過しています（全角25文字・半角50文字まで）</span>
 <span class="mf-err">イベント名を入力してください</span>
 </div>
 <div class="mf-grid2">
@@ -961,7 +961,15 @@ function renderCalendar(lang){
       var endLabel='';
       if(multiDay){
         var ev0=grouped[k].find(function(e){return e.start!==e.end;});
-        if(ev0){var sp=ev0.end.split('-');endLabel=lang==='ja'?'〜'+parseInt(sp[1])+'月'+parseInt(sp[2])+'日':'〜'+MONTHS_EN[parseInt(sp[1])-1]+' '+parseInt(sp[2]);}
+        if(ev0){
+          var sp=ev0.end.split('-');
+          var ed=new Date(parseInt(sp[0]),parseInt(sp[1])-1,parseInt(sp[2]));
+          if(lang==='ja'){
+            endLabel=' 〜 '+parseInt(sp[1])+'月'+parseInt(sp[2])+'日（'+DAYS_JA[ed.getDay()]+'）';
+          } else {
+            endLabel=' 〜 '+MONTHS_EN[parseInt(sp[1])-1]+' '+parseInt(sp[2])+' ('+DAYS_EN[ed.getDay()]+')';
+          }
+        }
       }
       html+='<div class="agenda-date-group"><div class="agenda-date-label">'+dayLabel+(endLabel?'<span class="agenda-date-label-end">'+endLabel+'</span>':'')+'</div>';
       grouped[k].forEach(function(e){
@@ -988,7 +996,7 @@ function renderEventImages(lang){
     var reserveBox='';
     if(e.reserve==='required'){
       var body=lang==='ja'?'ご参加には事前予約が必要です。ご予約は下記までお願いいたします。ご予約の際は、お名前と参加人数をお知らせください。':'Reservation is required to attend. Please contact us at the details below. Please provide your name and number of participants.';
-      reserveBox='<div class="event-reservation-box"><span style="font-weight:600;display:block;margin-bottom:0.4rem">'+e.name+'</span><span style="display:block;margin-bottom:0.4rem">'+body+'</span><span style="display:block">Tel：<span style="color:#9e4028;cursor:pointer" onclick="window.location.href=\'tel:080-4329-6712\'">080-4329-6712</span></span><span style="display:block">Mail：<span style="color:#9e4028;cursor:pointer" onclick="window.location.href=\'mailto:orchrch2024@gmail.com\'">orchrch2024@gmail.com</span></span></div>';
+      reserveBox='<div class="event-reservation-box"><span style="display:block;margin-bottom:0.4rem">'+body+'</span><span style="display:block">Tel：<span style="color:#9e4028;cursor:pointer" onclick="window.location.href=\'tel:080-4329-6712\'">080-4329-6712</span></span><span style="display:block">Mail：<span style="color:#9e4028;cursor:pointer" onclick="window.location.href=\'mailto:orchrch2024@gmail.com\'">orchrch2024@gmail.com</span></span></div>';
     }
     html+='<div class="event-img-item"><img src="'+e.img+'" alt="'+altTxt+'" onclick="openLightbox(this.src)"/>'+reserveBox+'</div>';
   });
@@ -1091,7 +1099,7 @@ var pendingImgFilename=null;
 function checkEventNameLen(inputId,warnId){
   var val=document.getElementById(inputId).value; var len=0;
   for(var i=0;i<val.length;i++){len+=val.charCodeAt(i)>127?2:1;}
-  document.getElementById(warnId).style.display=len>30?'block':'none';
+  document.getElementById(warnId).style.display=len>50?'block':'none';
 }
 
 /* ========== 翻訳 ========== */
@@ -1280,7 +1288,7 @@ async function saveEvent(mode){
   });
   if(!ok)return;
   var len=0; for(var i=0;i<name.length;i++){len+=name.charCodeAt(i)>127?2:1;}
-  if(len>30){document.getElementById(pfx+'-name-warn').style.display='block';return;}
+  if(len>50){document.getElementById(pfx+'-name-warn').style.display='block';return;}
   var imgFilename=buildImgFilename(start,stime,isMultiDay);
   /* 画像パスはGitHub Pages絶対URLで保存 */
   var imgRelPath='images/events/'+imgFilename;
