@@ -20,12 +20,12 @@
     "img": "https://or-church.github.io/or-church-test/images/events/202607311900.png"
   },
   {
-    "id": "202608011400",
-    "name": "Worship 3Bカフェ2000回PreParty",
+    "id": "202608010000",
+    "name": "Worship 3Bカフェ 2000回 Pre Party",
     "start": "2026-08-01",
-    "end": "2026-08-01",
-    "stime": "14:00",
-    "etime": "17:00",
+    "end": "2026-08-04",
+    "stime": "",
+    "etime": "",
     "reserve": "free",
     "img": "https://or-church.github.io/or-church-test/images/events/202608011400.png"
   }
