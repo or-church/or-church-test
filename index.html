@@ -1088,6 +1088,7 @@ function renderMaintEventList(){
 var editingEventId=null;
 var pendingImgData=null;
 var pendingImgFilename=null;
+function checkEventNameLen(inputId,warnId){
   var val=document.getElementById(inputId).value; var len=0;
   for(var i=0;i<val.length;i++){len+=val.charCodeAt(i)>127?2:1;}
   document.getElementById(warnId).style.display=len>30?'block':'none';
