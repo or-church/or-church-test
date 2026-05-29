@@ -696,7 +696,7 @@ footer{background-color:#2c1a0e;color:rgba(245,237,227,0.7)}
 </div>
 <div class="mf-field" id="fev-etime-wrap">
 <label class="mf-label">終了時間<span class="req">*</span></label>
-<input type="time" class="mf-input" id="fev-etime" onchange="onFevEtimeChange()"/>
+<input type="time" class="mf-input" id="fev-etime"/>
 <span class="mf-err">終了時間を入力してください</span>
 </div>
 </div>
@@ -1187,14 +1187,6 @@ function onFevEndChange(){
   }
   updateFevTimeGroupVisibility();
 }
-function onFevEtimeChange(){
-  var stime=document.getElementById('fev-stime').value;
-  var etime=document.getElementById('fev-etime').value;
-  if(stime&&etime&&etime<=stime){
-    alert('終了時間は開始時間より後の時間を指定してください。');
-    document.getElementById('fev-etime').value='';
-  }
-}
 function updateFevTimeGroupVisibility(){
   var start=document.getElementById('fev-start').value;
   var end=document.getElementById('fev-end').value;
@@ -1311,6 +1303,11 @@ async function saveEvent(mode){
     if(!checks[k]){wrap.classList.add('has-err');ok=false;}else{wrap.classList.remove('has-err');}
   });
   if(!ok)return;
+  /* 終了時間が開始時間以前の場合は警告 */
+  if(!isMultiDay&&stime&&etime&&etime<=stime){
+    alert('終了時間は開始時間より後の時間を指定してください。');
+    return;
+  }
   var len=0; for(var i=0;i<name.length;i++){len+=name.charCodeAt(i)>127?2:1;}
   if(len>50){document.getElementById(pfx+'-name-warn').style.display='block';return;}
   var imgFilename=buildImgFilename(start,stime,isMultiDay);
@@ -1336,27 +1333,27 @@ async function saveEvent(mode){
   }
   renderCalendar('ja');renderCalendar('en');renderEventImages('ja');renderEventImages('en');
   try{
-    /* イベントをevents.jsonに保存 */
-    await saveEventsToGitHub();
-    /* 画像をGitHubにアップロード */
+    /* 画像処理を先に行い、URLを確定してからevents.jsonを保存 */
     if(pendingImgData){
       /* 新しい画像が選択された場合：新ファイル名でアップロード */
       var base64=pendingImgData.split(',')[1];
       await githubUpdateBinary(imgRelPath,base64,'upload event image');
-      /* 古いファイルは別名なら削除（古い画像と新しい画像は別ファイル） */
+      /* 古いファイルは別名なら削除 */
       if(oldImgRelPath){
         await githubDeleteFile(oldImgRelPath,'delete old event image');
       }
     } else if(oldImgRelPath){
       /* 新しい画像が選択されていないがファイル名が変わった場合：リネーム */
-      await githubRenameFile(oldImgRelPath,imgRelPath,'rename event image');
-      /* リネーム後のURLに更新 */
-      var idx2=eventsData.findIndex(function(e){return e.id===imgFilename.replace('.png','');});
-      if(idx2>=0&&eventsData[idx2].img){
-        eventsData[idx2].img=GITHUB_PAGES_BASE+'/'+imgRelPath+'?t='+Date.now();
-        await saveEventsToGitHub();
+      var renamed=await githubRenameFile(oldImgRelPath,imgRelPath,'rename event image');
+      if(renamed&&!renamed.error){
+        /* リネーム成功後にeventsDataのURLを更新 */
+        var newImgUrl=GITHUB_PAGES_BASE+'/'+imgRelPath+'?t='+Date.now();
+        var idx2=eventsData.findIndex(function(e){return e.id===imgFilename.replace('.png','');});
+        if(idx2>=0) eventsData[idx2].img=newImgUrl;
       }
     }
+    /* events.jsonを保存（画像URL確定後に1回だけ） */
+    await saveEventsToGitHub();
   }catch(e){console.error('保存エラー',e);}
   pendingImgData=null; pendingImgFilename=null;
   closeSubForm(mode==='new'?'event-new':'event-edit');
@@ -1438,6 +1435,11 @@ function showPage(name){
     if(currentLang==='en'&&navLabelsEn[bp])b.textContent=navLabelsEn[bp];
     else if(currentLang==='ja'&&navLabelsJa[bp])b.textContent=navLabelsJa[bp];
   });
+  /* URLハッシュにページを保存（リロード後も復元できるよう） */
+  try{
+    if(name!=='home') history.replaceState(null,'','#'+name);
+    else history.replaceState(null,'',location.pathname);
+  }catch(e){}
   window.scrollTo(0,0);
   revealPage(name);
 }
@@ -1467,9 +1469,14 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLightbo
   var halfYear=(half===1&&m>=10)?y:(half===1&&m<=3)?y-1:y;
   calHalf.ja=calHalf.en=half;
   calHalfYear.ja=calHalfYear.en=halfYear;
-  showPage('home');
+  /* URLハッシュからページを復元（リロード対応） */
+  var initPage='home';
+  if(location.hash){
+    var hashPage=location.hash.replace('#','');
+    if(document.getElementById('page-'+hashPage)) initPage=hashPage;
+  }
+  showPage(initPage);
   updateNoticeBanners();
-  /* GitHubからevents.jsonを読み込んでカレンダー・画像を描画 */
   loadEventsFromGitHub();
 })();
 </script>
