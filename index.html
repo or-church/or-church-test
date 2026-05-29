@@ -955,7 +955,7 @@ function renderCalendar(lang){
     keys.forEach(function(k){
       var dp=k.split('-');
       var d=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
-      var dayLabel=lang==='ja'?parseInt(dp[1])+'月'+parseInt(dp[2])+'日（'+DAYS_JA[d.getDay()]+'）':MONTHS_EN[d.getMonth()]+' '+parseInt(dp[2])+', '+dp[0]+' ('+DAYS_EN[d.getDay()]+')';
+      var dayLabel=lang==='ja'?parseInt(dp[1])+'月'+parseInt(dp[2])+'日('+DAYS_JA[d.getDay()]+'）':MONTHS_EN[d.getMonth()]+' '+parseInt(dp[2])+', '+dp[0]+' ('+DAYS_EN[d.getDay()]+')';
       /* 複数日またぎの場合は終了日を日付ラベル右に表示 */
       var multiDay=grouped[k].some(function(e){return e.start!==e.end;});
       var endLabel='';
@@ -965,7 +965,7 @@ function renderCalendar(lang){
           var sp=ev0.end.split('-');
           var ed=new Date(parseInt(sp[0]),parseInt(sp[1])-1,parseInt(sp[2]));
           if(lang==='ja'){
-            endLabel=' 〜 '+parseInt(sp[1])+'月'+parseInt(sp[2])+'日（'+DAYS_JA[ed.getDay()]+'）';
+            endLabel=' 〜 '+parseInt(sp[1])+'月'+parseInt(sp[2])+'日('+DAYS_JA[ed.getDay()]+')';
           } else {
             endLabel=' 〜 '+MONTHS_EN[parseInt(sp[1])-1]+' '+parseInt(sp[2])+' ('+DAYS_EN[ed.getDay()]+')';
           }
