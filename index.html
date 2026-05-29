@@ -14,11 +14,11 @@
 html{scroll-behavior:smooth}
 body{background-color:#faf6f0;color:#2c1a0e;font-family:'Noto Sans JP',sans-serif;font-weight:400;font-size:16px;line-height:2;overflow-x:hidden;width:100%;max-width:100%}
 /* イベント画像グリッド（最大6枚・PC2行3列・スマホ6行1列） */
-.event-img-grid{max-width:1000px;margin:0 auto 2rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
+.event-img-grid{max-width:1000px;margin:0 auto 2rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;align-items:start}
 @media(max-width:600px){.event-img-grid{grid-template-columns:1fr}}
 .event-img-item{display:flex;flex-direction:column}
 .event-img-item img{width:100%;display:block;border-radius:8px;box-shadow:0 4px 20px rgba(44,26,14,0.08);cursor:zoom-in}
-.event-reservation-box{margin-top:0.6rem;font-size:clamp(0.78rem,1.5vw,0.92rem);line-height:2;color:#5c3520;padding:0.7rem 1rem;background-color:rgba(158,64,40,0.05);border-radius:6px;border-left:3px solid #9e4028}
+.event-reservation-box{margin-top:0.6rem;font-size:clamp(0.78rem,1.5vw,0.92rem);line-height:1.8;color:#5c3520;padding:0.7rem 1rem;background-color:rgba(158,64,40,0.05);border-radius:6px;border-left:3px solid #9e4028}
 /* ナビ */
 nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:0 clamp(0.6rem,2vw,2rem);height:56px;display:flex;align-items:center;justify-content:space-between;background-color:rgba(250,246,240,0.97);border-bottom:1px solid rgba(158,64,40,0.15);box-shadow:0 2px 20px rgba(44,26,14,0.07)}
 .nav-logo{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(0.72rem,2.2vw,1.15rem);color:#9e4028;background:none;border:none;cursor:pointer;white-space:nowrap;padding:0;flex-shrink:0}
