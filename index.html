@@ -1197,6 +1197,12 @@ async function githubUpdate(path,content,message){
   var res=await fetch(WORKER_URL+'/github',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'update',path:path,content:content,message:message})});
   return res.json();
 }
+async function githubDeleteFile(path,message){
+  try{
+    var res=await fetch(WORKER_URL+'/github',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'delete',path:path,message:message||'delete file'})});
+    return res.json();
+  }catch(e){console.log('ファイル削除エラー',e);}
+}
 async function githubUpdateBinary(path,base64Content,message){
   var res=await fetch(WORKER_URL+'/github',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'update-binary',path:path,content:base64Content,message:message})});
   return res.json();
@@ -1293,11 +1299,22 @@ async function saveEvent(mode){
   /* 画像パスはGitHub Pages絶対URLで保存 */
   var imgRelPath='images/events/'+imgFilename;
   var imgAbsUrl=pendingImgData?(GITHUB_PAGES_BASE+'/'+imgRelPath):'';
+  /* 編集時：古い画像パスを記録 */
+  var oldImgRelPath=null;
   if(mode==='new'){
     eventsData.push({id:imgFilename.replace('.png',''),name:name,start:start,end:end,stime:isMultiDay?'':stime,etime:isMultiDay?'':etime,reserve:reserve,img:imgAbsUrl});
   } else {
     var idx=eventsData.findIndex(function(e){return e.id===editingEventId;});
-    if(idx>=0){ eventsData[idx]={id:imgFilename.replace('.png',''),name:name,start:start,end:end,stime:isMultiDay?'':stime,etime:isMultiDay?'':etime,reserve:reserve,img:pendingImgData?imgAbsUrl:(eventsData[idx].img||'')}; }
+    if(idx>=0){
+      /* 古い画像パスを取得（ファイル名が変わる場合のみ削除対象） */
+      var oldImg=eventsData[idx].img||'';
+      var oldFilename=oldImg.split('/').pop();
+      var newFilename=imgFilename;
+      if(oldImg && oldFilename!==newFilename){
+        oldImgRelPath='images/events/'+oldFilename;
+      }
+      eventsData[idx]={id:imgFilename.replace('.png',''),name:name,start:start,end:end,stime:isMultiDay?'':stime,etime:isMultiDay?'':etime,reserve:reserve,img:pendingImgData?imgAbsUrl:(eventsData[idx].img||'')};
+    }
   }
   renderCalendar('ja');renderCalendar('en');renderEventImages('ja');renderEventImages('en');
   try{
@@ -1308,6 +1325,10 @@ async function saveEvent(mode){
       var base64=pendingImgData.split(',')[1];
       await githubUpdateBinary(imgRelPath,base64,'upload event image');
     }
+    /* 古い画像ファイルを削除（ファイル名が変わった場合） */
+    if(oldImgRelPath){
+      await githubDeleteFile(oldImgRelPath,'delete old event image');
+    }
   }catch(e){console.error('保存エラー',e);}
   pendingImgData=null; pendingImgFilename=null;
   closeSubForm(mode==='new'?'event-new':'event-edit');
@@ -1316,10 +1337,20 @@ async function saveEvent(mode){
 async function deleteEvent(){
   if(!editingEventId)return;
   if(!confirm('このイベントを削除しますか？'))return;
+  /* 削除するイベントの画像パスを取得 */
+  var delEv=eventsData.find(function(e){return e.id===editingEventId;});
+  var delImgRelPath=null;
+  if(delEv&&delEv.img){
+    delImgRelPath='images/events/'+delEv.img.split('/').pop();
+  }
   eventsData=eventsData.filter(function(e){return e.id!==editingEventId;});
   renderCalendar('ja');renderCalendar('en');renderEventImages('ja');renderEventImages('en');
   try{
     await saveEventsToGitHub();
+    /* 画像ファイルも削除 */
+    if(delImgRelPath){
+      await githubDeleteFile(delImgRelPath,'delete event image');
+    }
   }catch(e){console.error(e);}
   closeSubForm('event-edit');
   renderMaintEventList();
