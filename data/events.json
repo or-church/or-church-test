@@ -1,21 +1,11 @@
 [
   {
-    "id": "202605311600",
-    "name": "PRAISE PRAYER BBQ",
-    "start": "2026-05-31",
-    "end": "2026-05-31",
-    "stime": "16:00",
-    "etime": "18:00",
-    "reserve": "free",
-    "img": "https://or-church.github.io/or-church-test/images/events/202605311600.png"
-  },
-  {
-    "id": "202606201520",
+    "id": "202606201500",
     "name": "JESUS is KING OF KINGS",
     "start": "2026-06-20",
     "end": "2026-06-20",
-    "stime": "15:20",
-    "etime": "17:20",
+    "stime": "15:00",
+    "etime": "17:00",
     "reserve": "free",
     "img": "https://or-church.github.io/or-church-test/images/events/202606201500.png"
   },
@@ -31,7 +21,7 @@
   },
   {
     "id": "202608011400",
-    "name": "Worship 3Bカフェ 2000回 Pre Party",
+    "name": "Worship 3Bカフェ2000回PreParty",
     "start": "2026-08-01",
     "end": "2026-08-01",
     "stime": "14:00",
