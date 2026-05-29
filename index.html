@@ -1312,7 +1312,7 @@ async function saveEvent(mode){
   var imgFilename=buildImgFilename(start,stime,isMultiDay);
   /* 画像パスはGitHub Pages絶対URLで保存 */
   var imgRelPath='images/events/'+imgFilename;
-  var imgAbsUrl=pendingImgData?(GITHUB_PAGES_BASE+'/'+imgRelPath):'';
+  var imgAbsUrl=pendingImgData?(GITHUB_PAGES_BASE+'/'+imgRelPath+'?t='+Date.now()):'';
   /* 編集時：古い画像パスを記録 */
   var oldImgRelPath=null;
   if(mode==='new'){
@@ -1349,7 +1349,7 @@ async function saveEvent(mode){
       /* リネーム後のURLに更新 */
       var idx2=eventsData.findIndex(function(e){return e.id===imgFilename.replace('.png','');});
       if(idx2>=0&&eventsData[idx2].img){
-        eventsData[idx2].img=GITHUB_PAGES_BASE+'/'+imgRelPath;
+        eventsData[idx2].img=GITHUB_PAGES_BASE+'/'+imgRelPath+'?t='+Date.now();
         await saveEventsToGitHub();
       }
     }
