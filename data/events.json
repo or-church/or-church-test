@@ -8,5 +8,15 @@
     "etime": "17:00",
     "reserve": "free",
     "img": "https://or-church.github.io/or-church-test/images/events/202606201500.png?t=1780179955787"
+  },
+  {
+    "id": "202607311900",
+    "name": "廣瀬みちる「Prayer」ピアノソロ",
+    "start": "2026-07-31",
+    "end": "2026-07-31",
+    "stime": "19:00",
+    "etime": "21:00",
+    "reserve": "required",
+    "img": "https://or-church.github.io/or-church-test/images/events/202607311900.png?t=1780180052675"
   }
 ]
