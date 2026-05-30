@@ -1334,10 +1334,6 @@ async function saveEvent(mode){
       }
       console.log('oldImgRelPath after check:',oldImgRelPath);
       eventsData[idx]={id:imgFilename.replace('.png',''),name:name,start:start,end:end,stime:isMultiDay?'':stime,etime:isMultiDay?'':etime,reserve:reserve,img:pendingImgData?imgAbsUrl:(eventsData[idx].img||'')};
-      /* リネームが必要な場合は仮のURLをセット（後で更新） */
-      if(!pendingImgData&&oldImgRelPath){
-        eventsData[idx].img=GITHUB_PAGES_BASE+'/'+imgRelPath+'?t='+Date.now();
-      }
     }
   }
   renderCalendar('ja');renderCalendar('en');renderEventImages('ja');renderEventImages('en');
@@ -1353,15 +1349,37 @@ async function saveEvent(mode){
       }
     } else if(oldImgRelPath){
       /* 新しい画像が選択されていないがファイル名が変わった場合 */
-      /* 古い画像のbase64データを取得 */
       try{
         var getRes=await fetch(WORKER_URL+'/github',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'get',path:oldImgRelPath})});
         var getData=await getRes.json();
+        var oldBase64=null;
         if(getData.content){
-          /* GitHubのAPIレスポンスのbase64から空白・改行をすべて除去 */
-          var oldBase64=getData.content.replace(/[\s\r\n]/g,'');
+          /* 小さいファイル: APIから直接取得（空白・改行を除去） */
+          oldBase64=getData.content.replace(/[\s
+]/g,'');
+        }else if(getData.download_url){
+          /* 大きいファイル(1MB超): download_urlから生データを取得してbase64化 */
+          try{
+            var rawRes=await fetch(getData.download_url);
+            if(rawRes.ok){
+              var rawBlob=await rawRes.blob();
+              oldBase64=await new Promise(function(resolve,reject){
+                var reader=new FileReader();
+                reader.onload=function(e){resolve(e.target.result.split(',')[1]);};
+                reader.onerror=reject;
+                reader.readAsDataURL(rawBlob);
+              });
+            }
+          }catch(e2){console.error('download_url取得エラー',e2);}
+        }
+        if(oldBase64){
           await githubUpdateBinary(imgRelPath,oldBase64,'rename event image');
           await githubDeleteFile(oldImgRelPath,'delete old event image after rename');
+          /* リネーム成功後のみ画像URLを更新 */
+          if(idx>=0){eventsData[idx].img=GITHUB_PAGES_BASE+'/'+imgRelPath+'?t='+Date.now();}
+          renderEventImages('ja');renderEventImages('en');
+        }else{
+          console.log('リネーム失敗: 旧画像を取得できませんでした。URLはそのまま維持します。');
         }
       }catch(e){console.error('リネームエラー',e);}
     }
