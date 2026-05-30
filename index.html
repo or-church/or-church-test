@@ -771,6 +771,26 @@ function updateNoticeBanners(){
   }
 }
 
+/* ========== GitHub読み込み ========== */
+async function loadEventsFromGitHub(){
+  try{
+    var res=await fetch(WORKER_URL+'/github',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'get',path:'data/events.json'})});
+    var data=await res.json();
+    if(data.content){
+      var base64=data.content.replace(/\n/g,'');
+      var binary=atob(base64);
+      var bytes=new Uint8Array(binary.length);
+      for(var i=0;i<binary.length;i++){bytes[i]=binary.charCodeAt(i);}
+      var decoded=new TextDecoder('utf-8').decode(bytes);
+      var json=JSON.parse(decoded);
+      if(Array.isArray(json)) eventsData=json;
+    }
+  }catch(e){console.log('events.json読み込みエラー（初回は正常）',e);}
+  filterPastEvents();
+  renderCalendar('ja');renderCalendar('en');
+  renderEventImages('ja');renderEventImages('en');
+}
+
 /* ========== ページ切り替え ========== */
 function revealPage(name){
   setTimeout(function(){
