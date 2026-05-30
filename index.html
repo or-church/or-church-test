@@ -738,12 +738,12 @@ footer{background-color:#2c1a0e;color:rgba(245,237,227,0.7)}
 <div class="mf-grid2">
 <div class="mf-field" id="fee-start-wrap">
 <label class="mf-label">開始日<span class="req">*</span></label>
-<input type="date" class="mf-input" id="fee-start"/>
+<input type="date" class="mf-input" id="fee-start" onchange="onFeeStartChange()"/>
 <span class="mf-err">開始日を入力してください</span>
 </div>
 <div class="mf-field" id="fee-end-wrap">
 <label class="mf-label">終了日<span class="req">*</span></label>
-<input type="date" class="mf-input" id="fee-end"/>
+<input type="date" class="mf-input" id="fee-end" onchange="onFeeEndChange()"/>
 <span class="mf-err">終了日を入力してください</span>
 </div>
 <div class="mf-field" id="fee-stime-wrap">
@@ -1186,6 +1186,23 @@ function onFevEndChange(){
     document.getElementById('fev-end').value=start;
   }
   updateFevTimeGroupVisibility();
+}
+function onFeeStartChange(){
+  var start=document.getElementById('fee-start').value;
+  var end=document.getElementById('fee-end').value;
+  if(start&&end&&end<start){
+    document.getElementById('fee-end').value=start;
+    document.getElementById('fee-end-wrap').classList.remove('has-err');
+  }
+}
+function onFeeEndChange(){
+  var start=document.getElementById('fee-start').value;
+  var end=document.getElementById('fee-end').value;
+  if(start&&end&&end<start){
+    alert('終了日は開始日以降の日付を指定してください。');
+    document.getElementById('fee-end').value=start;
+    document.getElementById('fee-end-wrap').classList.remove('has-err');
+  }
 }
 function updateFevTimeGroupVisibility(){
   var start=document.getElementById('fev-start').value;
