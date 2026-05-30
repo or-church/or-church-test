@@ -1,15 +1,5 @@
 [
   {
-    "id": "202606011300",
-    "name": "テストイベント",
-    "start": "2026-06-01",
-    "end": "2026-06-01",
-    "stime": "13:00",
-    "etime": "15:00",
-    "reserve": "free",
-    "img": "https://or-church.github.io/or-church-test/images/events/202606011300.png?t=1780110101493"
-  },
-  {
     "id": "202606201500",
     "name": "JESUS is KING OF KINGS",
     "start": "2026-06-20",
