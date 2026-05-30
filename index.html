@@ -1303,6 +1303,12 @@ async function saveEvent(mode){
     if(!checks[k]){wrap.classList.add('has-err');ok=false;}else{wrap.classList.remove('has-err');}
   });
   if(!ok)return;
+  /* 終了日が開始日より前の場合は警告 */
+  if(start&&end&&end<start){
+    alert('終了日は開始日以降の日付を指定してください。');
+    document.getElementById(pfx+'-end-wrap').classList.add('has-err');
+    return;
+  }
   /* 終了時間が開始時間以前の場合は警告 */
   if(!isMultiDay&&stime&&etime&&etime<=stime){
     alert('終了時間は開始時間より後の時間を指定してください。');
