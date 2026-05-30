@@ -1,23 +1,13 @@
 [
   {
-    "id": "202606021200",
-    "name": "テスト01",
-    "start": "2026-06-02",
+    "id": "202605300000",
+    "name": "P P B",
+    "start": "2026-05-30",
     "end": "2026-06-02",
-    "stime": "12:00",
-    "etime": "14:00",
-    "reserve": "free",
-    "img": "https://or-church.github.io/or-church-test/images/events/202606021200.png?t=1780110016373"
-  },
-  {
-    "id": "202606050000",
-    "name": "ppb",
-    "start": "2026-06-05",
-    "end": "2026-06-09",
     "stime": "",
     "etime": "",
     "reserve": "free",
-    "img": "https://or-church.github.io/or-church-test/images/events/202606051200.png?t=1780107604964"
+    "img": "https://or-church.github.io/or-church-test/images/events/202605300000.png?t=1780110018893"
   },
   {
     "id": "202606201500",
@@ -28,16 +18,6 @@
     "etime": "17:00",
     "reserve": "free",
     "img": "https://or-church.github.io/or-church-test/images/events/202606201500.png?t=1780082962178"
-  },
-  {
-    "id": "202607311900",
-    "name": "廣瀬みちる「Prayer」ピアノソロ",
-    "start": "2026-07-31",
-    "end": "2026-07-31",
-    "stime": "19:00",
-    "etime": "21:00",
-    "reserve": "required",
-    "img": "https://or-church.github.io/or-church-test/images/events/202607310000.png?t=1780085514843"
   },
   {
     "id": "202608011400",
