@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
 @font-face{font-family:'Roxborough CF';src:url('fonts/RoxboroughCF-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'JK Gothic';src:url('fonts/JKGothic-M.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#e8ddd0;color:#2c1a0e;font-family:'Noto Sans JP',sans-serif;font-size:15px;line-height:1.8}
 #login-wrap{min-height:100svh;display:flex;align-items:center;justify-content:center;background:linear-gradient(170deg,#f5ede3 0%,#ddd0be 100%)}
@@ -25,7 +26,8 @@ body{background:#e8ddd0;color:#2c1a0e;font-family:'Noto Sans JP',sans-serif;font
 #admin-wrap{min-height:100svh;display:none}
 .admin-header{background:linear-gradient(to bottom,#f5ede3,#ede0d0);border-bottom:1px solid rgba(196,154,90,0.4);padding:0.9rem 1.6rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(44,26,14,0.08)}
 .admin-header-logo{display:flex;align-items:baseline;gap:0.8rem;flex-wrap:wrap}
-.admin-site-name{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.4rem;color:#9e4028;font-weight:400;line-height:1}
+.oru-gothic{font-family:'JK Gothic','Noto Sans JP',sans-serif;font-style:normal;font-weight:400;font-size:0.65em;display:inline-block;vertical-align:0.175em;line-height:1}
+.admin-site-name{font-family:'Roxborough CF','Cormorant Garamond',serif;font-style:normal;font-weight:400;font-size:1.4rem;color:#9e4028;line-height:1}
 .admin-page-name{font-size:0.68rem;letter-spacing:0.22em;color:#8b5a3a;padding-left:0.7rem;border-left:1px solid rgba(196,154,90,0.5)}
 .admin-logout{background:none;border:0.5px solid rgba(158,64,40,0.35);color:#9e4028;padding:5px 14px;border-radius:5px;font-size:12px;font-family:'Noto Sans JP',sans-serif;cursor:pointer}
 .admin-logout:hover{background:rgba(158,64,40,0.06)}
@@ -97,7 +99,7 @@ body{background:#e8ddd0;color:#2c1a0e;font-family:'Noto Sans JP',sans-serif;font
 <div id="admin-wrap">
   <header class="admin-header">
     <div class="admin-header-logo">
-      <span class="admin-site-name">OR Church &amp; Coffee</span>
+      <span class="admin-site-name">OR <span class="oru-gothic">(オル)</span> Church and Coffee</span>
       <span class="admin-page-name">管理画面</span>
     </div>
     <button class="admin-logout" onclick="logout()">ログアウト</button>
