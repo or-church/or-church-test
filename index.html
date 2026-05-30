@@ -1359,28 +1359,30 @@ async function saveEvent(mode){
       eventsData[idx]={id:imgFilename.replace('.png',''),name:name,start:start,end:end,stime:isMultiDay?'':stime,etime:isMultiDay?'':etime,reserve:reserve,img:pendingImgData?imgAbsUrl:(eventsData[idx].img||'')};
     }
   }
-  renderCalendar('ja');renderCalendar('en');renderEventImages('ja');renderEventImages('en');
+  renderCalendar('ja');renderCalendar('en');
+  var savedImgDataUrl=pendingImgData;
+  setSaveBtnState(mode,true);
+  clearMaintProgress();
   try{
-    /* 画像処理を先に行い、URLを確定してからevents.jsonを保存 */
     if(pendingImgData){
-      /* 新しい画像が選択された場合：新ファイル名でアップロード */
+      showMaintProgress('画像をアップロード中...','working');
       var base64=pendingImgData.split(',')[1];
       await githubUpdateBinary(imgRelPath,base64,'upload event image');
-      /* 古いファイルは別名なら削除 */
       if(oldImgRelPath){
         await githubDeleteFile(oldImgRelPath,'delete old event image');
       }
+      if(idx>=0){eventsData[idx].img=GITHUB_PAGES_BASE+'/'+imgRelPath+'?t='+Date.now();}
+      showMaintProgress('画像のアップロード完了','ok');
+      renderEventImages('ja');renderEventImages('en');
     } else if(oldImgRelPath){
-      /* 新しい画像が選択されていないがファイル名が変わった場合 */
+      showMaintProgress('画像を移動中...','working');
       try{
         var getRes=await fetch(WORKER_URL+'/github',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'get',path:oldImgRelPath})});
         var getData=await getRes.json();
         var oldBase64=null;
         if(getData.content){
-          /* 小さいファイル: APIから直接取得（空白・改行を除去） */
           oldBase64=getData.content.replace(/\s/g,'');
         }else if(getData.download_url){
-          /* 大きいファイル(1MB超): download_urlから生データを取得してbase64化 */
           try{
             var rawRes=await fetch(getData.download_url);
             if(rawRes.ok){
@@ -1392,30 +1394,40 @@ async function saveEvent(mode){
                 reader.readAsDataURL(rawBlob);
               });
             }
-          }catch(e2){console.error('download_url取得エラー',e2);}
+          }catch(e2){console.error('download_url error',e2);}
         }
         if(oldBase64){
           await githubUpdateBinary(imgRelPath,oldBase64,'rename event image');
           await githubDeleteFile(oldImgRelPath,'delete old event image after rename');
-          /* リネーム成功後のみ画像URLを更新 */
           if(idx>=0){eventsData[idx].img=GITHUB_PAGES_BASE+'/'+imgRelPath+'?t='+Date.now();}
           renderEventImages('ja');renderEventImages('en');
+          showMaintProgress('画像の移動完了','ok');
         }else{
-          console.log('リネーム失敗: 旧画像を取得できませんでした。URLはそのまま維持します。');
+          showMaintProgress('旧画像の取得失敗（URLはそのまま維持）','error');
         }
-      }catch(e){console.error('リネームエラー',e);}
+      }catch(e){console.error('rename error',e);showMaintProgress('画像移動エラー','error');}
     }
-    /* events.jsonを保存（画像URL確定後に1回だけ） */
+    showMaintProgress('データを保存中...','working');
     await saveEventsToGitHub();
-  }catch(e){console.error('保存エラー',e);}
+    showMaintProgress('保存完了！','ok');
+  }catch(e){
+    console.error('save error',e);
+    showMaintProgress('保存エラーが発生しました','error');
+    setSaveBtnState(mode,false);
+    return;
+  }
   pendingImgData=null; pendingImgFilename=null;
+  setSaveBtnState(mode,false);
+  clearMaintProgress();
+  renderEventImages('ja');renderEventImages('en');
   closeSubForm(mode==='new'?'event-new':'event-edit');
   renderMaintEventList();
-  /* 画像がある場合は反映待ちメッセージを表示 */
-  if(imgAbsUrl){
-    showSaveMessage('保存しました。画像の表示には1〜2分かかる場合があります。');
-  } else {
-    showSaveMessage('保存しました。');
+  if(savedImgDataUrl){
+    showSaveMessage('✅ 保存しました',savedImgDataUrl);
+  }else if(oldImgRelPath){
+    showSaveMessage('✅ 保存しました。画像の反映には1～2分かかる場合があります。');
+  }else{
+    showSaveMessage('✅ 保存しました。');
   }
 }
 async function deleteEvent(){
@@ -1441,19 +1453,56 @@ async function deleteEvent(){
   showSaveMessage('削除しました。');
 }
 
-function showSaveMessage(msg){
+function showSaveMessage(msg,imgSrc){
   var el=document.getElementById('save-message');
   if(!el){
     el=document.createElement('div');
     el.id='save-message';
-    el.style.cssText='position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#5c8a3a;color:#fff;padding:0.8rem 1.6rem;border-radius:8px;font-size:14px;font-family:\'Noto Sans JP\',sans-serif;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:opacity 0.5s';
+    el.style.cssText='position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#5c8a3a;color:#fff;padding:0.8rem 1.6rem;border-radius:8px;font-size:14px;font-family:\'Noto Sans JP\',sans-serif;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:opacity 0.5s;text-align:center;min-width:200px';
     document.body.appendChild(el);
   }
-  el.textContent=msg;
+  var imgHtml='';
+  if(imgSrc){
+    imgHtml='<div style="margin-top:0.5rem">'+'<img src="'+imgSrc+'" style="width:88px;height:66px;object-fit:cover;border-radius:4px;border:2px solid rgba(255,255,255,0.4)"/>'+'<div style="font-size:11px;opacity:0.85;margin-top:3px">'+'↑ 保存された画像（反映には1〜2分かかります）'+'</div></div>';
+  }
+  el.innerHTML=msg+imgHtml;
   el.style.opacity='1';
   clearTimeout(el._timer);
-  el._timer=setTimeout(function(){el.style.opacity='0';},4000);
+  el._timer=setTimeout(function(){el.style.opacity='0';},imgSrc?7000:4000);
 }
+/* ========== メンテナンス保存プログレス ========== */
+function showMaintProgress(msg,type){
+  var overlay=document.querySelector('.maint-overlay.open');
+  if(!overlay)return;
+  var el=overlay.querySelector('#maint-save-progress');
+  if(!el){
+    el=document.createElement('div');
+    el.id='maint-save-progress';
+    el.style.cssText="margin:0.8rem 0 0;padding:0.5rem 0.8rem;background:rgba(44,26,14,0.05);"
+      +"border-radius:6px;font-size:12px;font-family:'Noto Sans JP',sans-serif;line-height:2;max-height:130px;overflow-y:auto";
+    var footer=overlay.querySelector('.mf-footer');
+    if(footer)footer.parentNode.insertBefore(el,footer);
+  }
+  var icon=type==='ok'?'✅':type==='error'?'❌':'⏳';
+  el.innerHTML+='<div>'+icon+' '+msg+'</div>';
+  el.scrollTop=el.scrollHeight;
+}
+function clearMaintProgress(){
+  document.querySelectorAll('#maint-save-progress').forEach(function(e){e.remove();});
+}
+function setSaveBtnState(mode,loading){
+  var modal=document.getElementById('maint-event-'+mode);
+  if(!modal)return;
+  var btn=modal.querySelector('.mf-btn-save');
+  var cancelBtn=modal.querySelector('.mf-btn-cancel');
+  if(btn){
+    btn.disabled=loading;
+    btn.style.opacity=loading?'0.6':'1';
+    btn.textContent=loading?'保存中...':(mode==='new'?'保存':'更新');
+  }
+  if(cancelBtn){cancelBtn.disabled=loading;cancelBtn.style.opacity=loading?'0.4':'1';}
+}
+
 /* ========== ページ切り替え ========== */
 function revealPage(name){
   setTimeout(function(){
