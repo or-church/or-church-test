@@ -1323,11 +1323,16 @@ async function saveEvent(mode){
     if(idx>=0){
       /* 古い画像パスを取得（ファイル名が変わる場合のみ削除対象） */
       var oldImg=eventsData[idx].img||'';
-      var oldFilename=oldImg.split('/').pop().split('?')[0];
+      var oldFilename=oldImg?oldImg.split('/').pop().split('?')[0]:'';
       var newFilename=imgFilename;
-      if(oldImg && oldFilename!==newFilename){
+      console.log('oldImg:',oldImg);
+      console.log('oldFilename:',oldFilename);
+      console.log('newFilename:',newFilename);
+      console.log('oldImgRelPath before check:',oldImgRelPath);
+      if(oldImg && oldFilename && oldFilename!==newFilename){
         oldImgRelPath='images/events/'+oldFilename;
       }
+      console.log('oldImgRelPath after check:',oldImgRelPath);
       eventsData[idx]={id:imgFilename.replace('.png',''),name:name,start:start,end:end,stime:isMultiDay?'':stime,etime:isMultiDay?'':etime,reserve:reserve,img:pendingImgData?imgAbsUrl:(eventsData[idx].img||'')};
       /* リネームが必要な場合は仮のURLをセット（後で更新） */
       if(!pendingImgData&&oldImgRelPath){
