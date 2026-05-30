@@ -7,23 +7,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#faf6f0;color:#2c1a0e;font-family:'Noto Sans JP',sans-serif;font-size:15px;line-height:1.8}
-#login-wrap{min-height:100svh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#faf6f0,#ede0d0)}
-.login-box{background:#fff;border-radius:12px;padding:2.5rem 2rem;width:100%;max-width:360px;box-shadow:0 8px 32px rgba(44,26,14,0.12);text-align:center}
-.login-logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.5rem;color:#9e4028;margin-bottom:0.2rem}
-.login-title{font-size:0.8rem;letter-spacing:0.18em;color:#8b5a3a;margin-bottom:1.8rem}
-.login-box input[type=password]{width:100%;padding:10px 14px;border:0.5px solid #c49a5a;border-radius:6px;font-size:14px;font-family:'Noto Sans JP',sans-serif;background:#faf6f0;color:#2c1a0e;margin-bottom:0.8rem;outline:none}
-.login-box input[type=password]:focus{border-color:#9e4028}
-.login-box button{width:100%;padding:10px;background:#9e4028;color:#fff;border:none;border-radius:6px;font-size:14px;font-family:'Noto Sans JP',sans-serif;cursor:pointer}
+body{background:#e8ddd0;color:#2c1a0e;font-family:'Noto Sans JP',sans-serif;font-size:15px;line-height:1.8}
+#login-wrap{min-height:100svh;display:flex;align-items:center;justify-content:center;background:linear-gradient(170deg,#f5ede3 0%,#ddd0be 100%)}
+.login-box{width:100%;max-width:400px;padding:3.5rem 2.5rem;text-align:center}
+.login-logo-area{margin-bottom:1.8rem}
+.login-site-name{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(2rem,6vw,3rem);font-weight:400;color:#9e4028;line-height:1.15;letter-spacing:0.01em;display:block}
+.login-page-name{display:block;font-size:0.72rem;letter-spacing:0.28em;color:#8b5a3a;margin-top:0.5rem;font-weight:400}
+.login-rule{width:40px;height:1.5px;background:#c49a5a;margin:1.4rem auto}
+.login-box input[type=password]{width:100%;padding:11px 14px;border:0.5px solid rgba(196,154,90,0.6);border-radius:6px;font-size:14px;font-family:'Noto Sans JP',sans-serif;background:rgba(250,246,240,0.9);color:#2c1a0e;margin-bottom:0.8rem;outline:none}
+.login-box input[type=password]:focus{border-color:#9e4028;background:#faf6f0}
+.login-box button{width:100%;padding:11px;background:#9e4028;color:#fff;border:none;border-radius:6px;font-size:14px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;letter-spacing:0.05em}
 .login-box button:hover{background:#7a3020}
 .login-err{font-size:12px;color:#c0392b;margin-top:0.5rem;display:none}
 #admin-wrap{min-height:100svh;display:none}
-.admin-header{background:#2c1a0e;color:#f5ede3;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.admin-logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem;color:#d4b89a}
-.admin-logout{background:rgba(255,255,255,0.1);border:0.5px solid rgba(212,184,154,0.4);color:#d4b89a;padding:5px 14px;border-radius:5px;font-size:12px;font-family:'Noto Sans JP',sans-serif;cursor:pointer}
-.admin-logout:hover{background:rgba(255,255,255,0.18)}
+.admin-header{background:linear-gradient(to bottom,#f5ede3,#ede0d0);border-bottom:1px solid rgba(196,154,90,0.4);padding:0.9rem 1.6rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(44,26,14,0.08)}
+.admin-header-logo{display:flex;align-items:baseline;gap:0.8rem;flex-wrap:wrap}
+.admin-site-name{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.4rem;color:#9e4028;font-weight:400;line-height:1}
+.admin-page-name{font-size:0.68rem;letter-spacing:0.22em;color:#8b5a3a;padding-left:0.7rem;border-left:1px solid rgba(196,154,90,0.5)}
+.admin-logout{background:none;border:0.5px solid rgba(158,64,40,0.35);color:#9e4028;padding:5px 14px;border-radius:5px;font-size:12px;font-family:'Noto Sans JP',sans-serif;cursor:pointer}
+.admin-logout:hover{background:rgba(158,64,40,0.06)}
 .admin-main{max-width:860px;margin:0 auto;padding:2rem 1.2rem}
-.admin-section{background:#fff;border-radius:8px;padding:1.5rem;margin-bottom:1.4rem;box-shadow:0 2px 12px rgba(44,26,14,0.07)}
+.admin-section{background:#faf6f0;border-radius:8px;padding:1.5rem;margin-bottom:1.4rem;box-shadow:0 2px 12px rgba(44,26,14,0.07);border:0.5px solid rgba(196,154,90,0.2)}
 .admin-section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:0.8rem;border-bottom:1px solid #ede0d0;flex-wrap:wrap;gap:8px}
 .admin-section-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:#5c3520}
 .admin-notice-preview{font-size:13px;color:#5c3520;padding:0.6rem 1rem;background:rgba(158,64,40,0.05);border-left:3px solid #9e4028;border-radius:0 4px 4px 0;margin-bottom:0.8rem;min-height:2rem}
@@ -76,8 +80,11 @@ body{background:#faf6f0;color:#2c1a0e;font-family:'Noto Sans JP',sans-serif;font
 
 <div id="login-wrap">
   <div class="login-box">
-    <div class="login-logo">OR Church &amp; Coffee</div>
-    <div class="login-title">管理画面</div>
+    <div class="login-logo-area">
+      <span class="login-site-name">OR Church &amp; Coffee</span>
+      <span class="login-page-name">管理画面</span>
+    </div>
+    <div class="login-rule"></div>
     <input type="password" id="maint-pw" placeholder="パスワードを入力" onkeydown="if(event.key==='Enter')maintLogin()"/>
     <button onclick="maintLogin()">ログイン</button>
     <div class="login-err" id="maint-err">パスワードが違います</div>
@@ -86,7 +93,10 @@ body{background:#faf6f0;color:#2c1a0e;font-family:'Noto Sans JP',sans-serif;font
 
 <div id="admin-wrap">
   <header class="admin-header">
-    <span class="admin-logo">OR Church 管理画面</span>
+    <div class="admin-header-logo">
+      <span class="admin-site-name">OR Church &amp; Coffee</span>
+      <span class="admin-page-name">管理画面</span>
+    </div>
     <button class="admin-logout" onclick="logout()">ログアウト</button>
   </header>
   <main class="admin-main">
