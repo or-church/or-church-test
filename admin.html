@@ -363,13 +363,19 @@ async function loadEventsFromGitHub(){
 }
 async function loadNoticeFromGitHub(){
   try{
-    var html=await getIndexHtml();
-    if(!html)return;
-    var jaM=html.match(/id="notice-banner-ja"[^>]*><span[^>]*>[^<]*<\/span><span[^>]*>([\s\S]*?)<\/span><\/div>/);
-    var enM=html.match(/id="notice-banner-en"[^>]*><span[^>]*>[^<]*<\/span><span[^>]*>([\s\S]*?)<\/span><\/div>/);
-    noticeData.ja=(jaM&&jaM[1])?jaM[1]:'';
-    noticeData.en=(enM&&enM[1])?enM[1]:'';
-  }catch(e){console.log('notice load error',e);}
+    var res=await fetch(WORKER_URL+'/github',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'get',path:'data/notices.json'})});
+    var data=await res.json();
+    if(data.content){
+      var base64=data.content.replace(/\n/g,'');
+      var binary=atob(base64);
+      var bytes=new Uint8Array(binary.length);
+      for(var i=0;i<binary.length;i++){bytes[i]=binary.charCodeAt(i);}
+      var decoded=new TextDecoder('utf-8').decode(bytes);
+      var json=JSON.parse(decoded);
+      noticeData.ja=json.ja||'';
+      noticeData.en=json.en||'';
+    }
+  }catch(e){console.log('notices.json load error',e);}
   updateNoticePreview();
 }
 async function saveEventsToGitHub(){
@@ -397,14 +403,7 @@ async function saveNotice(mode){
   noticeData={ja:ja,en:en};
   updateNoticePreview();
   try{
-    var html=await getIndexHtml();
-    if(html){
-      var jaNotice='<div class="notice-banner active" id="notice-banner-ja"><span class="notice-banner-title">＜お知らせ＞</span><span class="notice-banner-body">'+ja+'</span></div>';
-      var enNotice='<div class="notice-banner active" id="notice-banner-en"><span class="notice-banner-title">&lt;Announcement&gt;</span><span class="notice-banner-body">'+en+'</span></div>';
-      html=html.replace(/<div class="notice-banner[^"]*" id="notice-banner-ja">[\s\S]*?<\/div>/,jaNotice);
-      html=html.replace(/<div class="notice-banner[^"]*" id="notice-banner-en">[\s\S]*?<\/div>/,enNotice);
-      await githubUpdate('index.html',html,'update notice');
-    }
+    await githubUpdate('data/notices.json',JSON.stringify({ja:ja,en:en}),'update notice');
   }catch(e){console.error(e);}
   closeSubForm(mode==='new'?'notice-new':'notice-edit');
   showSaveMessage('✅ お知らせを保存しました。');
@@ -414,12 +413,7 @@ async function deleteNotice(){
   noticeData={ja:'',en:''};
   updateNoticePreview();
   try{
-    var html=await getIndexHtml();
-    if(html){
-      html=html.replace(/<div class="notice-banner[^"]*" id="notice-banner-ja">[\s\S]*?<\/div>/,'<div class="notice-banner" id="notice-banner-ja"></div>');
-      html=html.replace(/<div class="notice-banner[^"]*" id="notice-banner-en">[\s\S]*?<\/div>/,'<div class="notice-banner" id="notice-banner-en"></div>');
-      await githubUpdate('index.html',html,'delete notice');
-    }
+    await githubUpdate('data/notices.json',JSON.stringify({ja:'',en:''}),'delete notice');
   }catch(e){console.error(e);}
   closeSubForm('notice-edit');
   showSaveMessage('✅ お知らせを削除しました。');

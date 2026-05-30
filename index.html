@@ -771,6 +771,25 @@ function updateNoticeBanners(){
   }
 }
 
+/* ========== GitHubお知らせ読み込み ========== */
+async function loadNoticeFromGitHub(){
+  try{
+    var res=await fetch(WORKER_URL+'/github',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'get',path:'data/notices.json'})});
+    var data=await res.json();
+    if(data.content){
+      var base64=data.content.replace(/\n/g,'');
+      var binary=atob(base64);
+      var bytes=new Uint8Array(binary.length);
+      for(var i=0;i<binary.length;i++){bytes[i]=binary.charCodeAt(i);}
+      var decoded=new TextDecoder('utf-8').decode(bytes);
+      var json=JSON.parse(decoded);
+      noticeData.ja=json.ja||'';
+      noticeData.en=json.en||'';
+    }
+  }catch(e){console.log('notices.json load error',e);}
+  updateNoticeBanners();
+}
+
 /* ========== GitHub読み込み ========== */
 async function loadEventsFromGitHub(){
   try{
@@ -866,7 +885,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLightbo
     if(document.getElementById('page-'+hashPage)) initPage=hashPage;
   }
   showPage(initPage);
-  updateNoticeBanners();
+  loadNoticeFromGitHub();
   loadEventsFromGitHub();
 })();
 </script>
