@@ -1329,6 +1329,10 @@ async function saveEvent(mode){
         oldImgRelPath='images/events/'+oldFilename;
       }
       eventsData[idx]={id:imgFilename.replace('.png',''),name:name,start:start,end:end,stime:isMultiDay?'':stime,etime:isMultiDay?'':etime,reserve:reserve,img:pendingImgData?imgAbsUrl:(eventsData[idx].img||'')};
+      /* リネームが必要な場合は仮のURLをセット（後で更新） */
+      if(!pendingImgData&&oldImgRelPath){
+        eventsData[idx].img=GITHUB_PAGES_BASE+'/'+imgRelPath+'?t='+Date.now();
+      }
     }
   }
   renderCalendar('ja');renderCalendar('en');renderEventImages('ja');renderEventImages('en');
@@ -1349,15 +1353,9 @@ async function saveEvent(mode){
         var getRes=await fetch(WORKER_URL+'/github',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'get',path:oldImgRelPath})});
         var getData=await getRes.json();
         if(getData.content){
-          /* 取得したbase64データをそのまま新ファイル名でアップロード */
           var oldBase64=getData.content.replace(/\n/g,'');
           await githubUpdateBinary(imgRelPath,oldBase64,'rename event image');
-          /* 古いファイルを削除 */
           await githubDeleteFile(oldImgRelPath,'delete old event image after rename');
-          /* eventsDataのURLを更新 */
-          var newImgUrl=GITHUB_PAGES_BASE+'/'+imgRelPath+'?t='+Date.now();
-          var idx2=eventsData.findIndex(function(e){return e.id===imgFilename.replace('.png','');});
-          if(idx2>=0) eventsData[idx2].img=newImgUrl;
         }
       }catch(e){console.error('リネームエラー',e);}
     }
