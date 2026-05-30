@@ -1358,7 +1358,8 @@ async function saveEvent(mode){
         var getRes=await fetch(WORKER_URL+'/github',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'get',path:oldImgRelPath})});
         var getData=await getRes.json();
         if(getData.content){
-          var oldBase64=getData.content.replace(/\n/g,'');
+          /* GitHubのAPIレスポンスのbase64から空白・改行をすべて除去 */
+          var oldBase64=getData.content.replace(/[\s\r\n]/g,'');
           await githubUpdateBinary(imgRelPath,oldBase64,'rename event image');
           await githubDeleteFile(oldImgRelPath,'delete old event image after rename');
         }
