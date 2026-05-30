@@ -1355,8 +1355,7 @@ async function saveEvent(mode){
         var oldBase64=null;
         if(getData.content){
           /* 小さいファイル: APIから直接取得（空白・改行を除去） */
-          oldBase64=getData.content.replace(/[\s
-]/g,'');
+          oldBase64=getData.content.replace(/\s/g,'');
         }else if(getData.download_url){
           /* 大きいファイル(1MB超): download_urlから生データを取得してbase64化 */
           try{
