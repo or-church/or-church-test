@@ -597,6 +597,13 @@ async function saveEvent(mode){
     }
   }
   var savedImgDataUrl=pendingImgData;
+  var existingImgUrl='';
+  if(mode==='edit'){
+    var existIdx=eventsData.findIndex(function(e){return e.id===editingEventId;});
+    if(existIdx>=0&&eventsData[existIdx].img){
+      existingImgUrl=eventsData[existIdx].img.split('?')[0];
+    }
+  }
   setSaveBtnState(mode,true);clearMaintProgress();
   try{
     if(pendingImgData){
@@ -638,6 +645,7 @@ async function saveEvent(mode){
     showMaintProgress('データを保存中...','working');
     await saveEventsToGitHub();
     showMaintProgress('保存完了！','ok');
+    await new Promise(function(resolve){setTimeout(resolve,800);});
   }catch(e){
     console.error('save error',e);
     showMaintProgress('保存エラーが発生しました','error');
@@ -648,6 +656,7 @@ async function saveEvent(mode){
   renderMaintEventList();
   closeSubForm(mode==='new'?'event-new':'event-edit');
   if(savedImgDataUrl){showSaveMessage('✅ 保存しました',savedImgDataUrl);}
+  else if(existingImgUrl){showSaveMessage('✅ 保存しました',existingImgUrl);}
   else if(oldImgRelPath){showSaveMessage('✅ 保存しました。画像の反映には1〜2分かかる場合があります。');}
   else{showSaveMessage('✅ 保存しました。');}
 }
