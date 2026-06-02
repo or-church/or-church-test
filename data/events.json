@@ -1,15 +1,5 @@
 [
   {
-    "id": "202606021400",
-    "name": "子どもお楽しみ会",
-    "start": "2026-06-02",
-    "end": "2026-06-02",
-    "stime": "14:00",
-    "etime": "15:00",
-    "reserve": "free",
-    "img": "https://or-church.github.io/or-church-test/images/events/202606021400_1780401413255.png?t=1780401413255"
-  },
-  {
     "id": "202606141100",
     "name": "日曜礼拝",
     "start": "2026-06-14",
