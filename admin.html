@@ -68,7 +68,7 @@ body{background:#e8ddd0;color:#2c1a0e;font-family:'Noto Sans JP',sans-serif;font
 .mf-char-warn{font-size:11px;color:#c0392b;display:none;margin-top:2px}
 .mf-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .mf-section-label{font-size:11px;letter-spacing:0.1em;color:#9e4028;font-weight:500;margin:0.5rem 0 0.3rem;border-bottom:1px solid rgba(196,154,90,0.35);padding-bottom:4px;background:rgba(196,154,90,0.06);padding:3px 6px 4px}
-.mf-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:0.7rem;border-top:0.5px solid rgba(196,154,90,0.3);padding-top:0.6rem}.mf-footer-btns{display:flex;gap:8px;flex-shrink:0}.mf-delete-inline{margin:0;padding:0.4rem 0.7rem;background:rgba(192,57,43,0.04);border-radius:6px;border:0.5px solid rgba(192,57,43,0.2);flex:1;min-width:0;max-width:75%}.mf-delete-inline p{font-size:11px;color:#8b5a3a;margin-bottom:0.3rem}
+.mf-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:0.3rem;border-top:0.5px solid rgba(196,154,90,0.3);padding-top:0.5rem}.mf-footer-btns{display:flex;gap:8px;flex-shrink:0}.mf-delete-inline{margin:0;padding:0.4rem 0.7rem;background:rgba(192,57,43,0.04);border-radius:6px;border:0.5px solid rgba(192,57,43,0.2);flex:1;min-width:0;max-width:75%}.mf-delete-inline p{font-size:11px;color:#8b5a3a;margin-bottom:0.3rem}
 .mf-btn-cancel{background:none;border:0.5px solid #c49a5a;border-radius:6px;padding:6px 16px;font-size:13px;color:#5c3520;cursor:pointer;font-family:'Noto Sans JP',sans-serif}
 .mf-btn-save{background:#9e4028;border:none;border-radius:6px;padding:6px 20px;font-size:13px;color:#fff;cursor:pointer;font-family:'Noto Sans JP',sans-serif;font-weight:500}
 .mf-btn-save:hover{background:#7a3020}
@@ -219,7 +219,7 @@ body{background:#e8ddd0;color:#2c1a0e;font-family:'Noto Sans JP',sans-serif;font
       <span class="mf-err">予約の要否を選択してください</span>
     </div>
     <div class="mf-section-label">画像（任意）</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;margin-bottom:6px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start">
       <div class="mf-img-drop" id="fev-drop" onclick="document.getElementById('fev-file').click()" ondragover="evtDragover(event,'fev-drop')" ondragleave="evtDragleave('fev-drop')" ondrop="evtDrop(event,'fev-file','fev-img-preview','new')" style="height:160px;display:flex;align-items:center;justify-content:center">クリックまたは<br/>ドラッグ＆ドロップ<br/>で画像を選択</div>
       <img id="fev-img-preview" class="mf-img-preview" alt="プレビュー" style="display:none;width:100%;max-height:160px;object-fit:contain;border-radius:6px"/>
     </div>
@@ -273,7 +273,7 @@ body{background:#e8ddd0;color:#2c1a0e;font-family:'Noto Sans JP',sans-serif;font
       <span class="mf-err">予約の要否を選択してください</span>
     </div>
     <div class="mf-section-label">画像</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;margin-bottom:6px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start">
       <div class="mf-img-drop" id="fee-drop" onclick="document.getElementById('fee-file').click()" ondragover="evtDragover(event,'fee-drop')" ondragleave="evtDragleave('fee-drop')" ondrop="evtDrop(event,'fee-file','fee-img-preview','edit')" style="height:160px;display:flex;align-items:center;justify-content:center">クリックまたは<br/>ドラッグ＆ドロップ<br/>で画像を変更（省略可）</div>
       <img id="fee-img-preview" class="mf-img-preview" alt="プレビュー" style="width:100%;max-height:160px;object-fit:contain;border-radius:6px;display:none"/>
     </div>
