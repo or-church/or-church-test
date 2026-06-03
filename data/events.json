@@ -1,15 +1,5 @@
 [
   {
-    "id": "202605311100",
-    "name": "日曜礼拝",
-    "start": "2026-05-31",
-    "end": "2026-05-31",
-    "stime": "11:00",
-    "etime": "12:00",
-    "reserve": "free",
-    "img": "https://or-church.github.io/or-church-test/images/events/202605311100_1780455499809.png?t=1780455499809"
-  },
-  {
     "id": "202606201500",
     "name": "JESUS is KING OF KINGS",
     "start": "2026-06-20",
