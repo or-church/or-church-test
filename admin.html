@@ -574,7 +574,7 @@ function processNoticeImgFile(file,previewId){
     var img=new Image();
     img.onload=function(){
       var w=img.width,h=img.height;
-      if(h>512){var ratio=512/h;w=Math.round(w*ratio);h=512;}
+      if(w>512||h>512){var ratio=512/Math.max(w,h);w=Math.round(w*ratio);h=Math.round(h*ratio);}
       var canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
       noticeImgData=canvas.toDataURL('image/png');
@@ -596,7 +596,7 @@ function processImgFile(file,previewId,mode){
     var img=new Image();
     img.onload=function(){
       var w=img.width,h=img.height;
-      if(h>1024){var ratio=1024/h;w=Math.round(w*ratio);h=1024;}
+      if(w>1024||h>1024){var ratio=1024/Math.max(w,h);w=Math.round(w*ratio);h=Math.round(h*ratio);}
       var canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
       var dataUrl=canvas.toDataURL('image/png');
