@@ -409,7 +409,7 @@ function renderMaintNoticeList(){
   noticesData.forEach(function(n){
     var preview=n.ja.length>35?n.ja.slice(0,35)+'…':n.ja;
     html+='<div class="maint-row">'
-      +'<div class="maint-row-label">'+preview+'</div>'
+      +'<div class="maint-row-label"><span class="maint-event-name">'+preview+'</span></div>'
       +'<div class="maint-btns-right"><button class="maint-btn-edit" onclick="openNoticeEdit(\''+n.id+'\')">編集</button></div>'
       +'</div>';
   });
