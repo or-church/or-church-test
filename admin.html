@@ -551,7 +551,7 @@ function processNoticeImgFile(file,previewId){
     var img=new Image();
     img.onload=function(){
       var w=img.width,h=img.height;
-      if(w>1024||h>1024){var ratio=Math.min(1024/w,1024/h);w=Math.round(w*ratio);h=Math.round(h*ratio);}
+      if(h>512){var ratio=512/h;w=Math.round(w*ratio);h=512;}
       var canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
       noticeImgData=canvas.toDataURL('image/png');
@@ -573,7 +573,7 @@ function processImgFile(file,previewId,mode){
     var img=new Image();
     img.onload=function(){
       var w=img.width,h=img.height;
-      if(w>1024||h>1024){var ratio=Math.min(1024/w,1024/h);w=Math.round(w*ratio);h=Math.round(h*ratio);}
+      if(h>1024){var ratio=1024/h;w=Math.round(w*ratio);h=1024;}
       var canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
       var dataUrl=canvas.toDataURL('image/png');
@@ -589,7 +589,7 @@ function buildEventId(start,stime,isMultiDay){
   return start.replace(/-/g,'')+stime.replace(':','');
 }
 function buildImgFilename(start,stime,isMultiDay){
-  return buildEventId(start,stime,isMultiDay)+'_'+Date.now()+'.png';
+  return 'event_'+buildEventId(start,stime,isMultiDay)+'_'+Date.now()+'.png';
 }
 
 function onFevStartChange(){
