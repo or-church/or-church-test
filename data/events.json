@@ -10,6 +10,16 @@
     "img": "https://or-church.github.io/or-church-test/images/events/event_202606201500_1780554932340.png?t=1780554932340"
   },
   {
+    "id": "202607081000",
+    "name": "隅田川花火大会をみんなで見る！",
+    "start": "2026-07-08",
+    "end": "2026-07-08",
+    "stime": "10:00",
+    "etime": "12:00",
+    "reserve": "free",
+    "img": ""
+  },
+  {
     "id": "202607311900",
     "name": "廣瀬みちる「Prayer」ピアノソロ",
     "start": "2026-07-31",
