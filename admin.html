@@ -78,6 +78,9 @@ body{background:#e8ddd0;color:#2c1a0e;font-family:'Noto Sans JP',sans-serif;font
 .mf-img-drop.dragover{background:rgba(196,154,90,0.1)}
 .mf-img-preview{width:100%;max-height:200px;object-fit:contain;border-radius:6px;display:none}
 .translating{opacity:0.6;font-style:italic}
+.maint-reserve-badge{font-size:10px;border-radius:3px;padding:1px 6px;margin-left:5px;vertical-align:middle}
+.maint-reserve-req{color:#9e4028;background:rgba(158,64,40,0.08);border:0.5px solid rgba(158,64,40,0.3)}
+.maint-reserve-free{color:#7a5c20;background:rgba(196,154,90,0.12);border:0.5px solid rgba(196,154,90,0.4)}
 @media(max-width:540px){.mf-grid2{grid-template-columns:1fr}.admin-main{padding:1rem 0.8rem}}
 </style>
 </head>
@@ -527,9 +530,15 @@ function renderMaintEventList(){
     var ed=new Date(ev.end||ev.start);ed.setHours(0,0,0,0);
     var isPast=ed<today;
     var pastBadge=isPast?'<span class="past-badge">終了</span>':'';
+    var reserveBadge=ev.reserve==='required'
+      ?'<span class="maint-reserve-badge maint-reserve-req">要予約</span>'
+      :'<span class="maint-reserve-badge maint-reserve-free">予約不要</span>';
+    var dateStr=ev.start+(ev.start!==ev.end?' 〜 '+ev.end:'')+(ev.stime?' '+ev.stime:'');
     html+='<div class="maint-row">'
-      +'<div><div class="maint-row-label"><span class="maint-event-name">'+ev.name+'</span>'+pastBadge+'</div>'
-      +'<div class="maint-row-sub">'+ev.start+(ev.start!==ev.end?' 〜 '+ev.end:'')+(ev.stime?' '+ev.stime:'')+'</div></div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div class="maint-row-label"><span class="maint-event-name">'+ev.name+'</span>'+pastBadge+reserveBadge+'</div>'
+      +'<div class="maint-row-sub">'+dateStr+'</div>'
+      +'</div>'
       +'<div class="maint-btns-right"><button class="maint-btn-edit" onclick="openEventEdit(\''+ev.id+'\')">編集</button></div>'
       +'</div>';
   });
