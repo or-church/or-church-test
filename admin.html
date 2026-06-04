@@ -140,6 +140,12 @@ body{background:#e8ddd0;color:#2c1a0e;font-family:'Noto Sans JP',sans-serif;font
       <label class="mf-label">Translation</label>
       <textarea class="mf-textarea" id="fn-en" readonly placeholder="日本語を入力すると自動翻訳されます"></textarea>
     </div>
+    <div class="mf-section-label">画像（任意）</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start">
+      <div class="mf-img-drop" id="fn-drop" onclick="document.getElementById('fn-file').click()" ondragover="evtDragover(event,'fn-drop')" ondragleave="evtDragleave('fn-drop')" ondrop="noticeEvtDrop(event,'fn-drop','fn-img-preview')" style="height:120px;display:flex;align-items:center;justify-content:center">クリックまたは<br/>ドラッグ＆ドロップ<br/>で画像を選択</div>
+      <img id="fn-img-preview" class="mf-img-preview" alt="プレビュー" style="display:none;width:100%;max-height:110px;object-fit:contain;border-radius:6px;margin:6px 0"/>
+    </div>
+    <input type="file" id="fn-file" accept="image/*" style="display:none" onchange="handleNoticeImgFile(this,'fn-img-preview')"/>
     <div class="mf-footer">
       <button class="mf-btn-cancel" onclick="closeSubForm('notice-new')">キャンセル</button>
       <button class="mf-btn-save" onclick="saveNotice('new')">保存</button>
@@ -162,6 +168,12 @@ body{background:#e8ddd0;color:#2c1a0e;font-family:'Noto Sans JP',sans-serif;font
       <label class="mf-label">Translation</label>
       <textarea class="mf-textarea" id="fe-en" readonly></textarea>
     </div>
+    <div class="mf-section-label">画像（任意）</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start">
+      <div class="mf-img-drop" id="fe-drop" onclick="document.getElementById('fe-file').click()" ondragover="evtDragover(event,'fe-drop')" ondragleave="evtDragleave('fe-drop')" ondrop="noticeEvtDrop(event,'fe-drop','fe-img-preview')" style="height:120px;display:flex;align-items:center;justify-content:center">クリックまたは<br/>ドラッグ＆ドロップ<br/>で画像を変更（省略可）</div>
+      <img id="fe-img-preview" class="mf-img-preview" alt="プレビュー" style="display:none;width:100%;max-height:110px;object-fit:contain;border-radius:6px;margin:6px 0"/>
+    </div>
+    <input type="file" id="fe-file" accept="image/*" style="display:none" onchange="handleNoticeImgFile(this,'fe-img-preview')"/>
     <div class="mf-footer" style="margin-top:5px;border-top:none;padding-top:0">
       <div class="mf-delete-inline">
         <p>お知らせを削除すると表示が消えます。</p>
@@ -297,13 +309,14 @@ body{background:#e8ddd0;color:#2c1a0e;font-family:'Noto Sans JP',sans-serif;font
 </div>
 
 <script>
-var WORKER_URL='https://or-church-api-test.ukonmai.workers.dev';
-var GITHUB_PAGES_BASE='https://or-church.github.io/or-church-test';
+var WORKER_URL='https://or-church-api.ukonmai.workers.dev';
+var GITHUB_PAGES_BASE='https://or-church.github.io';
 var eventsData=[];
 var noticeData={ja:'',en:''};
 var editingEventId=null;
 var pendingImgData=null;
 var pendingImgFilename=null;
+var noticeImgData=null;
 var isTranslating=false;
 var translateTimer=null;
 
@@ -409,20 +422,36 @@ async function saveNotice(mode){
   var wrap=document.getElementById(wrapId);
   if(!ja){wrap.classList.add('has-err');return;}
   wrap.classList.remove('has-err');
-  noticeData={ja:ja,en:en};
+  var imgRelPath=noticeImgData?('images/notices/notice_'+Date.now()+'.png'):null;
+  var imgAbsUrl=imgRelPath?(GITHUB_PAGES_BASE+'/'+imgRelPath+'?t='+Date.now()):'';
+  var oldImgRelPath=null;
+  if(mode==='edit'&&noticeImgData&&noticeData.img){
+    var oldFilename=noticeData.img.split('/').pop().split('?')[0];
+    oldImgRelPath='images/notices/'+oldFilename;
+  }
+  var finalImg=noticeImgData?imgAbsUrl:(mode==='edit'?noticeData.img||'':'');
+  noticeData={ja:ja,en:en,img:finalImg};
   updateNoticePreview();
   try{
-    await githubUpdate('data/notices.json',JSON.stringify({ja:ja,en:en}),'update notice');
+    if(noticeImgData&&imgRelPath){
+      await githubUpdateBinary(imgRelPath,noticeImgData.split(',')[1],'upload notice image');
+      if(oldImgRelPath){await githubDeleteFile(oldImgRelPath,'delete old notice image');}
+    }
+    await githubUpdate('data/notices.json',JSON.stringify({ja:ja,en:en,img:finalImg}),'update notice');
   }catch(e){console.error(e);}
+  noticeImgData=null;
   closeSubForm(mode==='new'?'notice-new':'notice-edit');
   showSaveMessage('✅ お知らせを保存しました。');
 }
 async function deleteNotice(){
   if(!confirm('お知らせを削除しますか？'))return;
-  noticeData={ja:'',en:''};
+  var delImgRelPath=null;
+  if(noticeData.img){var fn=noticeData.img.split('/').pop().split('?')[0];delImgRelPath='images/notices/'+fn;}
+  noticeData={ja:'',en:'',img:''};
   updateNoticePreview();
   try{
-    await githubUpdate('data/notices.json',JSON.stringify({ja:'',en:''}),'delete notice');
+    await githubUpdate('data/notices.json',JSON.stringify({ja:'',en:'',img:''}),'delete notice');
+    if(delImgRelPath){await githubDeleteFile(delImgRelPath,'delete notice image');}
   }catch(e){console.error(e);}
   closeSubForm('notice-edit');
   showSaveMessage('✅ お知らせを削除しました。');
@@ -433,11 +462,17 @@ function openForm(type){
   if(type==='notice-new'){
     document.getElementById('fn-ja').value='';document.getElementById('fn-en').value='';
     document.getElementById('fn-ja-wrap').classList.remove('has-err');
+    document.getElementById('fn-img-preview').style.display='none';document.getElementById('fn-img-preview').src='';
+    noticeImgData=null;
     document.getElementById('maint-notice-new').classList.add('open');
   }else if(type==='notice-edit'){
     document.getElementById('fe-ja').value=noticeData.ja||'';
     document.getElementById('fe-en').value=noticeData.en||'';
     document.getElementById('fe-ja-wrap').classList.remove('has-err');
+    var fePrev=document.getElementById('fe-img-preview');
+    if(noticeData.img){fePrev.src=noticeData.img;fePrev.style.display='block';fePrev.onerror=function(){fePrev.style.display='none';};}
+    else{fePrev.src='';fePrev.style.display='none';}
+    noticeImgData=null;
     document.getElementById('maint-notice-edit').classList.add('open');
   }else if(type==='event-new'){
     var now=new Date();var today=now.toISOString().slice(0,10);
@@ -508,6 +543,25 @@ async function doTranslate(type){
   }catch(e){dst.value='（翻訳エラー）';}
   isTranslating=false;
 }
+
+function handleNoticeImgFile(input,previewId){if(input.files[0])processNoticeImgFile(input.files[0],previewId);}
+function processNoticeImgFile(file,previewId){
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var w=img.width,h=img.height;
+      if(w>1024||h>1024){var ratio=Math.min(1024/w,1024/h);w=Math.round(w*ratio);h=Math.round(h*ratio);}
+      var canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      noticeImgData=canvas.toDataURL('image/png');
+      var prev=document.getElementById(previewId);prev.onerror=null;prev.src=noticeImgData;prev.style.display='block';
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function noticeEvtDrop(e,dropId,previewId){e.preventDefault();document.getElementById(dropId).classList.remove('dragover');var f=e.dataTransfer.files[0];if(f)processNoticeImgFile(f,previewId);}
 
 function evtDragover(e,dropId){e.preventDefault();document.getElementById(dropId).classList.add('dragover');}
 function evtDragleave(dropId){document.getElementById(dropId).classList.remove('dragover');}
