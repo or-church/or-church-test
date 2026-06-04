@@ -396,7 +396,7 @@ async function loadNoticeFromGitHub(){
       for(var i=0;i<binary.length;i++){bytes[i]=binary.charCodeAt(i);}
       var decoded=new TextDecoder('utf-8').decode(bytes);
       var json=JSON.parse(decoded);
-      if(Array.isArray(json)){noticesData=json;}
+      if(Array.isArray(json)){noticesData=json.slice().sort(function(a,b){return b.id>a.id?1:b.id<a.id?-1:0;});}
       else if(json&&json.ja){noticesData=[{id:'legacy_'+Date.now(),ja:json.ja,en:json.en||'',img:json.img||''}];}
       else{noticesData=[];}
     }
