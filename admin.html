@@ -443,17 +443,32 @@ async function saveNotice(mode){
       noticesData[idx]={id:editingNoticeId,ja:ja,en:en,img:noticeImgData?imgAbsUrl:(noticesData[idx].img||'')};
     }
   }
+  var savedNoticeImgData=noticeImgData;
+  setNoticeSaveBtnState(mode,true);
+  if(savedNoticeImgData)clearMaintProgress();
   try{
-    if(noticeImgData&&imgRelPath){
-      await githubUpdateBinary(imgRelPath,noticeImgData.split(',')[1],'upload notice image');
+    if(savedNoticeImgData&&imgRelPath){
+      showMaintProgress('画像をアップロード中...','working');
+      await githubUpdateBinary(imgRelPath,savedNoticeImgData.split(',')[1],'upload notice image');
       if(oldImgRelPath){await githubDeleteFile(oldImgRelPath,'delete old notice image');}
+      showMaintProgress('画像のアップロード完了','ok');
     }
+    if(savedNoticeImgData)showMaintProgress('データを保存中...','working');
     await githubUpdate('data/notices.json',JSON.stringify(noticesData,null,2),'update notices');
-  }catch(e){console.error(e);}
+    if(savedNoticeImgData){
+      showMaintProgress('保存完了！','ok');
+      await new Promise(function(resolve){setTimeout(resolve,800);});
+    }
+  }catch(e){
+    console.error(e);
+    showMaintProgress('保存エラーが発生しました','error');
+    setNoticeSaveBtnState(mode,false);return;
+  }
   noticeImgData=null;
+  setNoticeSaveBtnState(mode,false);clearMaintProgress();
   renderMaintNoticeList();
   closeSubForm(mode==='new'?'notice-new':'notice-edit');
-  showSaveMessage('✅ お知らせを保存しました。');
+  if(savedNoticeImgData){showSaveMessage('✅ お知らせを保存しました。',savedNoticeImgData);}else{showSaveMessage('✅ お知らせを保存しました。');}
 }
 async function deleteNotice(){
   if(!editingNoticeId)return;
@@ -764,6 +779,13 @@ function showMaintProgress(msg,type){
   el.innerHTML+='<div>'+icon+' '+msg+'</div>';el.scrollTop=el.scrollHeight;
 }
 function clearMaintProgress(){document.querySelectorAll('#maint-save-progress').forEach(function(e){e.remove();});}
+function setNoticeSaveBtnState(mode,loading){
+  var modal=document.getElementById('maint-notice-'+mode);if(!modal)return;
+  var btn=modal.querySelector('.mf-btn-save');
+  var cancelBtn=modal.querySelector('.mf-btn-cancel');
+  if(btn){btn.disabled=loading;btn.style.opacity=loading?'0.6':'1';btn.textContent=loading?'保存中...':(mode==='new'?'保存':'更新');}
+  if(cancelBtn){cancelBtn.disabled=loading;cancelBtn.style.opacity=loading?'0.4':'1';}
+}
 function setSaveBtnState(mode,loading){
   var modal=document.getElementById('maint-event-'+mode);if(!modal)return;
   var btn=modal.querySelector('.mf-btn-save');
