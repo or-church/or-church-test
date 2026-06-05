@@ -431,7 +431,7 @@ async function saveNotice(mode){
   if(!ja){wrap.classList.add('has-err');return;}
   wrap.classList.remove('has-err');
   var ts=Date.now();
-  var imgRelPath=noticeImgData?('images/notices/notice_'+ts+'.png'):null;
+  var imgRelPath=noticeImgData?('images/notices/notice_'+ts+'.webp'):null;
   var imgAbsUrl=imgRelPath?(GITHUB_PAGES_BASE+'/'+imgRelPath+'?t='+ts):'';
   var oldImgRelPath=null;
   if(mode==='new'){
@@ -590,10 +590,10 @@ function processNoticeImgFile(file,previewId){
     var img=new Image();
     img.onload=function(){
       var w=img.width,h=img.height;
-      if(w>512||h>512){var ratio=512/Math.max(w,h);w=Math.round(w*ratio);h=Math.round(h*ratio);}
+      if(w>256||h>256){var ratio=256/Math.max(w,h);w=Math.round(w*ratio);h=Math.round(h*ratio);}
       var canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
-      noticeImgData=canvas.toDataURL('image/png');
+      noticeImgData=canvas.toDataURL('image/webp',0.85);
       var prev=document.getElementById(previewId);prev.onerror=null;prev.src=noticeImgData;prev.style.display='block';
     };
     img.src=e.target.result;
@@ -612,10 +612,10 @@ function processImgFile(file,previewId,mode){
     var img=new Image();
     img.onload=function(){
       var w=img.width,h=img.height;
-      if(w>1024||h>1024){var ratio=1024/Math.max(w,h);w=Math.round(w*ratio);h=Math.round(h*ratio);}
+      if(w>800||h>800){var ratio=800/Math.max(w,h);w=Math.round(w*ratio);h=Math.round(h*ratio);}
       var canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
-      var dataUrl=canvas.toDataURL('image/png');
+      var dataUrl=canvas.toDataURL('image/webp',0.85);
       pendingImgData=dataUrl;
       var prev=document.getElementById(previewId);prev.onerror=null;prev.src=dataUrl;prev.style.display='block';
     };
@@ -628,7 +628,7 @@ function buildEventId(start,stime,isMultiDay){
   return start.replace(/-/g,'')+stime.replace(':','');
 }
 function buildImgFilename(start,stime,isMultiDay){
-  return 'event_'+buildEventId(start,stime,isMultiDay)+'_'+Date.now()+'.png';
+  return 'event_'+buildEventId(start,stime,isMultiDay)+'_'+Date.now()+'.webp';
 }
 
 function onFevStartChange(){
