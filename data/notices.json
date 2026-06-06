@@ -1,15 +1,9 @@
 [
   {
-    "id": "notice_1780725179736",
-    "ja": "＜6/30＞子どもお楽しみ会があります。ご家族連れでご参加ください。",
-    "en": "A children's fun event will be held on 6/30. Please feel free to bring your family and participate.",
-    "img": "https://or-church-test.github.io/images/notices/notice_1780725179736.webp?t=1780725179736"
-  },
-  {
-    "id": "notice_1780725206383",
-    "ja": "子ども食堂のボランティアを募集しています。18歳以上、クリスチャンかどうか問いません。",
-    "en": "We are recruiting volunteers for our children's cafeteria. Applicants must be 18 years or older. Religious affiliation is not required.",
-    "img": "https://or-church-test.github.io/images/notices/notice_1780725206383.webp?t=1780725206383"
+    "id": "notice_1780725287216",
+    "ja": "＜7/8＞「隅田川花火大会をみんなで見る！」イベントがあります。",
+    "en": "On July 8th, there will be an event where everyone can watch the Sumida River Fireworks Festival together!",
+    "img": ""
   },
   {
     "id": "notice_1780725232039",
@@ -18,9 +12,21 @@
     "img": "https://or-church-test.github.io/images/notices/notice_1780725232039.webp?t=1780725232039"
   },
   {
-    "id": "notice_1780725287216",
-    "ja": "＜7/8＞「隅田川花火大会をみんなで見る！」イベントがあります。",
-    "en": "On July 8th, there will be an event where everyone can watch the Sumida River Fireworks Festival together!",
+    "id": "notice_1780725206383",
+    "ja": "子ども食堂のボランティアを募集しています。18歳以上、クリスチャンかどうか問いません。",
+    "en": "We are recruiting volunteers for our children's cafeteria. Applicants must be 18 years or older. Religious affiliation is not required.",
+    "img": "https://or-church-test.github.io/images/notices/notice_1780725206383.webp?t=1780725206383"
+  },
+  {
+    "id": "notice_1780725179736",
+    "ja": "＜6/30＞子どもお楽しみ会があります。ご家族連れでご参加ください。",
+    "en": "A children's fun event will be held on 6/30. Please feel free to bring your family and participate.",
+    "img": "https://or-church-test.github.io/images/notices/notice_1780725179736.webp?t=1780725179736"
+  },
+  {
+    "id": "notice_1780725694272",
+    "ja": "テスト",
+    "en": "Test",
     "img": ""
   }
 ]
